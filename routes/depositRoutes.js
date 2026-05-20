@@ -10,7 +10,7 @@ import {
 export const depositRouter = express.Router();
 
 depositRouter.post("/addDeposit", addDeposit);
-depositRouter.delete("/deleteDeposit/:deposit_id", deleteDeposit);
-depositRouter.get("/searchDeposit/:deposit_id", searchDeposit);
+depositRouter.delete("/deleteDeposit/:_id", deleteDeposit);
+depositRouter.get("/searchDeposit/:_id", searchDeposit);
 depositRouter.get("/getDeposit", getDeposit);
-depositRouter.patch("/updateDeposit/:deposit_id", updateDeposit);
+depositRouter.patch("/updateDeposit/:_id", updateDeposit);

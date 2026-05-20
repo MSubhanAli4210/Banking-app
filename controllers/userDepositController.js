@@ -1,14 +1,20 @@
-import { deposits } from "../data/Data.js";
+import Deposit from "../models/deposit.js";
 
-export const depositsFromUser = (req, res) => {
+export const depositsFromUser = async (req, res) => {
   try {
-    const { user_id } = req.params;
-    let indexs = deposits.filter((s) => user_id == s.from);
+    const { email } = req.params;
+    let deposit = await Deposit.find({ from: email });
 
+    if (!deposit || deposit.length === 0) {
+      return res.json({
+        status: "failed",
+        message: "unable to find deposits from the user.",
+      });
+    }
     res.json({
       status: "success",
       message: "deposits found done by the user",
-      deposits: indexs,
+      deposits: deposit,
     });
   } catch (error) {
     res.json({
@@ -18,11 +24,16 @@ export const depositsFromUser = (req, res) => {
   }
 };
 
-export const depositsToUser = (req, res) => {
+export const depositsToUser = async (req, res) => {
   try {
-    const { user_id } = req.params;
-    let indexs = deposits.filter((s) => user_id == s.to);
-
+    const { email } = req.params;
+    let indexs = await Deposit.find({ to: email });
+    if (!indexs || indexs.length === 0) {
+      return res.json({
+        status: "failed",
+        message: "unable to find deposits to the user.",
+      });
+    }
     res.json({
       status: "success",
       message: "deposits found recived to the user",

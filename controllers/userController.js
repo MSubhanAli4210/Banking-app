@@ -1,36 +1,36 @@
-import { Users } from "../data/Data.js";
+import User from "../models/user.js";
+import mongoose from "mongoose";
 
-export const addUser = (req, res) => {
+export const addUser = async (req, res) => {
   try {
-    const { user_id, fullName, age, cnic, address, gender, email } = req.body;
-    const newUser = { user_id, fullName, age, cnic, address, gender, email };
-    Users.push(newUser);
+    const { fullName, age, cnic, address, gender, email } = req.body;
+    const newUser = { fullName, age, cnic, address, gender, email };
+    const createdUser = await User.create(newUser);
     res.json({
-      data: newUser,
+      data: createdUser,
       message: "User added successfully",
     });
   } catch (error) {
+    console.error(error)
     res.json({
       status: "Error",
-      message: "user not found",
+      message: "unable to add user",
     });
   }
 };
 
-export const deleteUser = (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
-    const { user_id } = req.params;
-    const index = Users.findIndex((s) => s.user_id == user_id);
+    const { email } = req.params;
+    const record = await User.findOneAndDelete({ email: email });
+    const Users = await User.find();
 
-    if (index == -1) {
+    if (!record) {
       return res.json({
         status: "Error",
         message: "User not found",
       });
     }
-
-    // Users = Users.filter((s)=> s.user_id !== user_id);
-    Users.splice(index, 1);
 
     res.json({
       status: "success",
@@ -46,10 +46,10 @@ export const deleteUser = (req, res) => {
   }
 };
 
-export const searchUser = (req, res) => {
+export const searchUser = async (req, res) => {
   try {
-    const { user_id } = req.params;
-    const foundUser = Users.find((s) => s.user_id == user_id);
+    const { email } = req.params;
+    const foundUser = await User.find({ email: email} );
 
     if (!foundUser) {
       return res.json({
@@ -70,11 +70,12 @@ export const searchUser = (req, res) => {
   }
 };
 
-export const getUser = (req, res) => {
+export const getUser = async(req, res) => {
   try {
+    const Users = await User.find();
     res.json({
       status: "success",
-      Users: Users,
+      Users,
     });
   } catch (error) {
     res.json({
@@ -84,24 +85,24 @@ export const getUser = (req, res) => {
   }
 };
 
-export const updateUser = (req, res) => {
+export const updateUser = async (req, res) => {
   try {
-    const { user_id } = req.params;
+    const { email } = req.params;
     const newData = req.body;
-    const index = Users.findIndex((s) => s.user_id == user_id);
+    const record = await User.findOneAndUpdate({ email: email }, newData, { new: true });
 
-    if (index == -1) {
+    if (!record) {
       return res.json({
         status: "error",
         message: "User not found",
       });
     }
-    Users[index] = { ...Users[index], ...newData };
+    const updatedUser = await User.find();
 
     res.json({
       status: "success",
       message: "updated User succesfully",
-      Users,
+      Users: updatedUser,
     });
   } catch (error) {
     res.json({

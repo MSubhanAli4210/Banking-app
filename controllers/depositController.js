@@ -1,12 +1,11 @@
-import { deposits } from "../data/Data.js";
+import Deposit from "../models/deposit.js";
 
-export const addDeposit = (req, res) => {
+export const addDeposit = async (req, res) => {
   try {
-    const { deposit_id, ammount, comment, from, to, purpose } = req.body;
-    const newDeposit = { deposit_id, ammount, comment, from, to, purpose };
-    deposits.push(newDeposit);
+    const deposits = req.body;
+    const createdDeposit = await Deposit.create(deposits);
     res.json({
-      data: newDeposit,
+      data: createdDeposit,
       message: "Deposit added successfully",
     });
   } catch (error) {
@@ -17,23 +16,23 @@ export const addDeposit = (req, res) => {
   }
 };
 
-export const deleteDeposit = (req, res) => {
+export const deleteDeposit = async (req, res) => {
   try {
-    const { deposit_id } = req.params;
-    const index = deposits.findIndex((s) => s.deposit_id == deposit_id);
+    const { _id } = req.params;
+    const record = await Deposit.findByIdAndDelete(_id);
+    const newData = await Deposit.find();
 
-    if (index === -1) {
+    if (!record) {
       return res.json({
         status: "Error",
         message: "deposit not found",
       });
     }
 
-    deposits.splice(index, 1);
     res.json({
       status: "success",
       message: "Deposit deleted",
-      deposits: deposits,
+      deposit: newData,
     });
   } catch (error) {
     res.json({
@@ -43,10 +42,10 @@ export const deleteDeposit = (req, res) => {
   }
 };
 
-export const searchDeposit = (req, res) => {
+export const searchDeposit = async (req, res) => {
   try {
-    const { deposit_id } = req.params;
-    const foundDeposit = deposits.find((s) => s.deposit_id == deposit_id);
+    const { _id } = req.params;
+    const foundDeposit = await Deposit.findById(_id);
 
     if (!foundDeposit) {
       return res.json({
@@ -68,8 +67,9 @@ export const searchDeposit = (req, res) => {
   }
 };
 
-export const getDeposit = (req, res) => {
+export const getDeposit = async (req, res) => {
   try {
+    const deposits = await Deposit.find();
     res.json({
       status: "success",
       deposits: deposits,
@@ -82,23 +82,24 @@ export const getDeposit = (req, res) => {
   }
 };
 
-export const updateDeposit = (req, res) => {
+export const updateDeposit = async (req, res) => {
   try {
-    const { deposit_id } = req.params;
+    const { _id } = req.params;
     const newData = req.body;
-    const index = deposits.findIndex((s) => s.id == deposit_id);
+    const record = await Deposit.findByIdAndUpdate(_id, newData);
+    const updatedDeposit = await Deposit.find();
 
-    if (index == -1) {
+    if (!record) {
       return res.json({
         status: "error",
         message: "deposit not found",
       });
     }
-    deposits[index] = { ...deposits[index], ...newData };
 
     res.json({
       status: "success",
       message: "updated deposit succesfully",
+      deposit: updatedDeposit,
     });
   } catch (error) {
     res.json({

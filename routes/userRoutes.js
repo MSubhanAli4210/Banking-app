@@ -10,13 +10,21 @@ import {
   depositsFromUser,
   depositsToUser,
 } from "../controllers/userDepositController.js";
+import {
+  withdrawsFromUser,
+  withdrawsToUser,
+} from "../controllers/userWithdrawController.js";
+import User from "../models/user.js";
 
 export const UserRouter = express.Router();
 
 UserRouter.post("/addUser", addUser);
-UserRouter.delete("/deleteUser/:user_id", deleteUser);
-UserRouter.get("/searchUser/:user_id", searchUser);
+UserRouter.delete("/deleteUser/:email", deleteUser);
+UserRouter.get("/searchUser/:email", searchUser);
 UserRouter.get("/getUser", getUser);
-UserRouter.patch("/updateUser/:user_id", updateUser);
-UserRouter.get("/depositsFromUser/:user_id", depositsFromUser);
-UserRouter.get("/depositsToUser/:user_id", depositsToUser);
+UserRouter.patch("/updateUser/:email", updateUser);
+UserRouter.get("/depositsFromUser/:email", depositsFromUser);
+UserRouter.get("/withdrawsFromUser/:email", withdrawsFromUser);
+UserRouter.get("/depositsToUser/:email", depositsToUser);
+UserRouter.get("/withdrawsToUser/:email", withdrawsToUser);
+
