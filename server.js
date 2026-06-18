@@ -4,6 +4,7 @@ import { depositRouter } from "./routes/depositRoutes.js";
 import connectDB from "./config/dataBase.js";
 import dotenv from "dotenv";
 import { withdrawRouter } from "./routes/withdrawRoutes.js";
+import { loanRouter } from "./routes/loanRouter.js";
 
 dotenv.config();
 connectDB();
@@ -16,7 +17,7 @@ app.get("/", (req, res) => res.send("server is live"));
 app.use("/withdraw", withdrawRouter);
 app.use("/deposit", depositRouter);
 app.use("/user", UserRouter);
-
+app.use("/loan", loanRouter);
 app.listen(process.env.PORT, () => {
   console.log("Server is live at : http://localhost:" + process.env.PORT + "/");
 });

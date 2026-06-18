@@ -14,11 +14,13 @@ import {
   withdrawsFromUser,
   withdrawsToUser,
 } from "../controllers/userWithdrawController.js";
+import {verifyToken} from "../middlewares/tokenCheck.js";
 import User from "../models/user.js";
 
 export const UserRouter = express.Router();
 
-UserRouter.post("/addUser", addUser);
+
+UserRouter.use(verifyToken);
 UserRouter.delete("/deleteUser/:email", deleteUser);
 UserRouter.get("/searchUser/:email", searchUser);
 UserRouter.get("/getUser", getUser);
