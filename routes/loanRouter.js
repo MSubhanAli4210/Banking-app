@@ -10,10 +10,14 @@ import {
   closeLoan,
   deleteLoan
 } from "../controllers/loanController.js";
+import { verifyToken } from "../middlewares/tokenCheck.js";
+import { validateAmount } from "../middlewares/validateAmount.js";
 
 export const loanRouter = express.Router();
 
-loanRouter.post("/createLoan", createLoan);
+
+loanRouter.use(verifyToken);
+loanRouter.post("/createLoan", validateAmount, createLoan);
 loanRouter.get("/getLoansByUser/:email", getLoansByUser);
 loanRouter.get("/getActiveLoans/:email", getActiveLoans);
 loanRouter.get("/getPendingLoans/:email", getPendingLoans);
